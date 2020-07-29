@@ -2,29 +2,49 @@ const PeerServer = require('./').PeerServer;
 const PORT = process.env.PORT;
 const server = PeerServer({port: PORT, proxied: true});
 const baseUrl = 'https://code-spot.azurewebsites.net/api/Room/';
-const https = require('https');
+const https = require('https'); 
 
 function handleConnect(client) {
     console.log('A peer with id ' + client.getId() + ' just connected to peerServer');
 }
 
 function handleDisconnect(client) {
-    // Delete peer from Db
     console.log('Handling Peer Disconnect');
-    const url = baseUrl + "DeletePeer?peerId=" + client.getId();
-    https.delete(url, response => {
-        let data = '';
-        response.on('data', chunk => {
-            data += chunk;
-        })
-        response.on('end', () => {
-            console.log(data);
-            console.log('Deleted peer with id: ' + client.getId() + ' from database');
-        })
-    })
-    .on('error', err => {
-        console.error('Error: ' + err.message);
+
+    const peerIdToDelete = client.getId();
+    const data = JSON.stringify({
+        peerId: peerIdToDelete
+      })
+    const options = {
+    hostname: 'code-spot.azurewebsites.net',
+    path: '/api/Room',
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length
+    }
+    }
+
+    const req = https.request(options, (res) => {
+        console.log(`statusCode: ${res.statusCode}`)
     });
+
+    let data = '';
+    res.on('data', (chunk) => {
+        data += chunk;
+    });
+    
+    req.on('error', (error) => {
+        console.error(error)
+    });
+
+    req.on('end', () => {
+        console.log(data);
+        console.log('Deleted peer with id: ' + client.getId() + ' from database');
+    });
+
+    req.write(data);
+    req.end();
 }
 
 server.on('connection', (client) => handleConnect(client));
