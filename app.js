@@ -16,7 +16,7 @@ function handleDisconnect(client) {
       })
     const options = {
     hostname: 'code-spot.azurewebsites.net',
-    path: '/api/Room',
+    path: '/api/Room/DeletePeer',
     method: 'DELETE',
     headers: {
         'Content-Type': 'application/json',
