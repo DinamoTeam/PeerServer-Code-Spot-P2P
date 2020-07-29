@@ -11,17 +11,11 @@ function handleDisconnect(client) {
     console.log('Handling Peer Disconnect');
 
     const peerIdToDelete = client.getId();
-    const requestContent = JSON.stringify({
-        peerId: peerIdToDelete
-      })
+
     const options = {
-    hostname: 'code-spot.azurewebsites.net',
-    path: '/api/Room/DeletePeer',
-    method: 'DELETE',
-    headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': requestContent.length
-    }
+        hostname: 'code-spot.azurewebsites.net',
+        path: '/api/Room/DeletePeer/' + peerIdToDelete,
+        method: 'DELETE',
     }
 
     let data = '';
@@ -41,7 +35,6 @@ function handleDisconnect(client) {
         console.log('Deleted peer with id: ' + client.getId() + ' from database');
     });
 
-    req.write(requestContent);
     req.end();
 }
 
