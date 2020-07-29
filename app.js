@@ -8,7 +8,7 @@ function handleDisconnect(client) {
     // Delete peer from Db
     console.log('Handling Peer Disconnect');
     const url = baseUrl + "DeletePeer?peerId=" + client.getId();
-    https.get(url, response => {
+    https.delete(url, response => {
         let data = '';
         response.on('data', chunk => {
             data += chunk;
