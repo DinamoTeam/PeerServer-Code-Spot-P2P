@@ -41,7 +41,7 @@ function handleDisconnect(client) {
         console.log('Deleted peer with id: ' + client.getId() + ' from database');
     });
 
-    req.write(data);
+    req.write(requestContent);
     req.end();
 }
 
