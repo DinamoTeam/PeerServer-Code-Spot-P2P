@@ -4,6 +4,10 @@ const server = PeerServer({port: PORT, proxied: true});
 const baseUrl = 'https://code-spot.azurewebsites.net/api/Room/';
 const https = require('https');
 
+function handleConnect(client) {
+    console.log('A peer with id ' + client.getId() + ' just connected to peerServer');
+}
+
 function handleDisconnect(client) {
     // Delete peer from Db
     console.log('Handling Peer Disconnect');
@@ -19,9 +23,9 @@ function handleDisconnect(client) {
         })
     })
     .on('error', err => {
-        console.log('Error: ' + err.message);
+        console.error('Error: ' + err.message);
     });
 }
 
-server.on('connection', (client) => {/* Do nothing */});
+server.on('connection', (client) => handleConnect(client));
 server.on('disconnect', (client) => handleDisconnect(client));
