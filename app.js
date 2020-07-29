@@ -1,7 +1,6 @@
 const PeerServer = require('./').PeerServer;
 const PORT = process.env.PORT;
 const server = PeerServer({port: PORT, proxied: true});
-const baseUrl = 'https://code-spot.azurewebsites.net/api/Room/';
 const https = require('https'); 
 
 function handleConnect(client) {
@@ -12,7 +11,7 @@ function handleDisconnect(client) {
     console.log('Handling Peer Disconnect');
 
     const peerIdToDelete = client.getId();
-    const data = JSON.stringify({
+    const requestContent = JSON.stringify({
         peerId: peerIdToDelete
       })
     const options = {
@@ -21,18 +20,17 @@ function handleDisconnect(client) {
     method: 'DELETE',
     headers: {
         'Content-Type': 'application/json',
-        'Content-Length': data.length
+        'Content-Length': requestContent.length
     }
     }
-
-    const req = https.request(options, (res) => {
-        console.log(`statusCode: ${res.statusCode}`)
-    });
 
     let data = '';
-    res.on('data', (chunk) => {
-        data += chunk;
-    });
+    const req = https.request(options, (res) => {
+        console.log(`statusCode: ${res.statusCode}`);
+        res.on('data', (chunk) => {
+            data += chunk;
+        });
+    });    
     
     req.on('error', (error) => {
         console.error(error)
